@@ -3,7 +3,7 @@ const Plane = require('../../database/flight/plane');
 const router = express.Router();
 
 // New plane
-router.post('/new', async (req, res) => {
+router.post('/new', authorize(['admin']), async (req, res) => {
   const { name, seats, availableFood, availableDrink } = req.body;
 
   try {

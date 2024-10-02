@@ -4,7 +4,7 @@ const Flight = require('../../database/flight/flight');
 const router = express.Router();
 
 // New flight
-router.post('/new', async (req, res) => {
+router.post('/new', authorize(['admin']), async (req, res) => {
   const { flightNumber, planeName, departureAirport, arrivalAirport, departureTime, arrivalTime } = req.body;
 
   try {
