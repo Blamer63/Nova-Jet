@@ -8,6 +8,9 @@ RUN npm install
 
 COPY . .
 
+COPY init.sh /usr/local/bin/init.sh
+RUN chmod +x /usr/local/bin/init.sh
+
 EXPOSE 5000
 
-CMD ["node", "src/index.js"]
+CMD ["/usr/local/bin/init.sh"]
