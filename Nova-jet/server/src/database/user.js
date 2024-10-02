@@ -4,31 +4,29 @@ const SALT_ROUNDS = 10;
 
 const userSchema = new mongoose.Schema({
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-        match: [/.+\@.+\..+/, 'Please fill a valid email address']
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/.+\@.+\..+/, 'Please fill a valid email address']
     },
-
     firstName: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true
     },
-
     lastName: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true
     },
-
     password: {
-        type: String,
-        required: true,
-        minlength: 6
-    }
+      type: String,
+      required: true,
+      minlength: 6
+    },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' }
 }, {
     collection: 'users',
     timestamps: true
