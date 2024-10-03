@@ -1,5 +1,6 @@
 const express = require('express');
-const Plane = require('../../database/flight/plane');
+const authorize = require('../middleware/auth');
+const { Plane } = require('../../database/flight/plane');
 const router = express.Router();
 
 // New plane
