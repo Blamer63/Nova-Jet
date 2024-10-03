@@ -1,0 +1,54 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker-compose build -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker image
+      run: docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+    - name: Deploy
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.DEPLOYMENT_HOST }}
+        USER: ${{ secrets.DEPLOYMENT_USER }}
+        CONTAINER_NAME: "Nova-Jet-MAIN"
+      run: |
+        # Write SSH private key to a file
+        echo "$SSH_PRIVATE_KEY" > id_rsa
+        chmod 600 id_rsa
+
+        # SSH into the remote server and deploy
+        ssh -i id_rsa -o StrictHostKeyChecking=no $USER@$HOST << EOF
+          # Pull the latest Docker image
+          docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+          # Stop and remove the existing container
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+
+          # Run the new container
+          docker run -d --name $CONTAINER_NAME -p 80:80 ghcr.io/${{ github.repository }}:${{ github.sha }}
+        EOF
+
+        # Clean up the SSH private key file
+        rm -f id_rsa
