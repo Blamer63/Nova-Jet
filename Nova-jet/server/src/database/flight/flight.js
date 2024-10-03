@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { planeSchema } = require('./plane');
+const seatSchema = require('./seat');
+const { foodSchema, drinkSchema } = require('./services');
 
 const flightSchema = new mongoose.Schema({
     flightNumber: {
@@ -7,7 +8,13 @@ const flightSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    plane: planeSchema,
+    planeType: {
+        type: String,
+        required: true,
+    },
+    seats: [seatSchema],
+    availableFood: [foodSchema],
+    availableDrink: [drinkSchema],
     departureAirport: {
         type: String,
         required: true
