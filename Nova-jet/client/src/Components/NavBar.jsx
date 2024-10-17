@@ -2,7 +2,9 @@
  
  const NavBar = () => {
    return (
+     <>
      <div>NavBar</div>
+     <div> awd</div></>
    )
  }
  
